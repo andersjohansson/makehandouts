@@ -57,14 +57,20 @@ your *actual* file name in place of "xxx". The 'makehandouts' command
 always creates 4 new PDF files, in the following formats:
 
 -   xxx-handout.pdf is a viewable version of your slides, without pauses
-    and overlays.\
--   xxx-handout1up.pdf is a printable version of the slides, one slide
-    per page, rotated by 90 degrees (in landscape mode) for proper
-    printing.\
+    and overlays.
 -   xxx-handout2up.pdf is a printable version of the slides, showing two
-    slides per page. \
+    slides per page.
+-   xxx-handout3up.pdf is	is a printable version of the slides, showing 3
+    slides per page.
 -   xxx-handout4up.pdf is a printable version of the slides, rotated 90
     degrees to landscape mode, showing four slides per page.
+-   xxx-handout6up.pdf is	is a printable version of the slides, showing 6
+    slides per page.	
+
+## 2.b Compressing files
+To generate files with compressed images add a second argument stating the quality setting to pass to ghostscript (which needs to be installed). This is reasonably one of  `screen` (72 dpi images), `ebook` (150 dpi), `printer` (300 dpi) or `prepress` (high quality, color preserving, 300 dpi imgs). For example:
+
+    makehandouts xxx ebook
 
 **NOTE:** To print the handouts, choose your desired format and view the
 corresponding PDF file using Abode's "acroread" (that tool fits
