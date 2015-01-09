@@ -8,64 +8,120 @@
 # Notes: Run this command in the same folder containing 'foo.tex'
 #       Type 'makehandouts' to get a hint on usage
 
+usage() { echo "Usage: $0 [-c <screen|ebook|printer|prepress>] [-m (use latexmk)] TEXFILEBASENAME" 1>&2; exit 1; }
+	# echo "usage: 'makehandouts <LaTeX root filename> [screen|ebook|printer|prepress]'"
+	# echo "e.g.:  'makehandouts foo'  to create handouts for foo.tex"
 
-if [ -n "$1" ]; then
- echo "# makefile for $1.tex (created by makehandouts command)" > /tmp/makefile
- echo "# creates $1-handout.pdf (for viewing slides without" >> /tmp/makefile
- echo "# pauses), $1-handout1up.pdf, $1-handout2up.pdf," >> /tmp/makefile
- echo "# and $1-handout4up.pdf (formatted for printing)" >> /tmp/makefile
- echo "default:	4up	2up 6up 3up" >> /tmp/makefile
- echo " " >> /tmp/makefile
- echo "1up:	$1-handout1up.pdf" >> /tmp/makefile
- echo " " >> /tmp/makefile
- echo "2up:	$1-handout2up.pdf" >> /tmp/makefile
- echo " " >> /tmp/makefile
- echo "4up:	$1-handout4up.pdf" >> /tmp/makefile
- echo " " >> /tmp/makefile
- echo "6up:	$1-handout6up.pdf" >> /tmp/makefile
- echo " " >> /tmp/makefile
- echo "3up:	$1-handout3up.pdf" >> /tmp/makefile
- echo " " >> /tmp/makefile
 
- echo "$1-handout3up.pdf: $1-handout.pdf" >> /tmp/makefile
- echo "	pdfjam-slides3up $1-handout.pdf --frame true  --outfile $1-handout3up.pdf" >> /tmp/makefile
- echo " " >> /tmp/makefile
+latexmk=
+compression=
+variants=
 
- echo "$1-handout6up.pdf: $1-handout.pdf" >> /tmp/makefile
- echo "	pdfjam-slides6up $1-handout.pdf --frame true  --outfile $1-handout6up.pdf" >> /tmp/makefile
- echo " " >> /tmp/makefile
+while getopts ":c:m12346" opt; do
+	case $opt in
+		c)
+			compression=$OPTARG
+			[[ $compression = "screen" || $compression = "ebook" || $compression = "printer" || $compression = "prepress" ]] || usage
+			;;
+		m)
+			latexmk=1
+			;;
+		1)
+			variants="$variants 1up"
+			;;
+		2)
+			variants="$variants 2up"
+			;;
+		3)
+			variants="$variants 3up"
+			;;
+		4)
+			variants="$variants 4up"
+			;;
+		6)
+			variants="$variants 6up"
+			;;
+		\?)
+			echo "Invalid option: -$OPTARG" >&2
+			exit 1
+			;;
+		:)
+			echo "Option -$OPTARG requires an argument." >&2
+			exit 1
+			;;
+	esac
+done
 
- echo "$1-handout4up.pdf: $1-handout.pdf" >> /tmp/makefile
- echo "	pdfnup $1-handout.pdf --nup 2x2 --frame true --outfile /tmp/junk.pdf" >> /tmp/makefile
- echo "	pdf90 /tmp/junk.pdf --outfile $1-handout4up.pdf" >> /tmp/makefile
- echo " " >> /tmp/makefile
+filename=${@:$OPTIND:1}
 
- echo "$1-handout2up.pdf:	$1-handout.pdf" >> /tmp/makefile
- echo "	pdfnup $1-handout.pdf --nup 1x2 --no-landscape --frame true --outfile $1-handout2up.pdf" >> /tmp/makefile
- echo " " >> /tmp/makefile
 
- echo "$1-handout.pdf:	$1-handout.tex" >> /tmp/makefile
- echo "	pdflatex $1-handout" >> /tmp/makefile
- echo "	pdflatex $1-handout" >> /tmp/makefile
- if [ -n "$2" ]; then
-  echo "	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/$2 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$1-handout-comp.pdf $1-handout.pdf" >> /tmp/makefile
-  echo "	mv $1-handout-comp.pdf $1-handout.pdf" >> /tmp/makefile
- fi
- echo " " >> /tmp/makefile
+if [ -n "$filename" ]; then
+	echo "# makefile for $filename.tex (created by makehandouts command)" > /tmp/makefile
+	echo "# creates $filename-handout.pdf (for viewing slides without" >> /tmp/makefile
+	echo "# pauses), and possibly some of filename-handout1up.pdf" >> /tmp/makefile
+	echo "# -- $filename-handout6up.pdf, (formatted for printing)" >> /tmp/makefile
+	if [[ -n "$variants" ]];then
+		echo "default:	$variants" >> /tmp/makefile
+	else
+		echo "default:  $filename-handout.pdf" >> /tmp/makefile
+	fi
+	echo " " >> /tmp/makefile
+	echo "1up:	$filename-handout1up.pdf" >> /tmp/makefile
+	echo " " >> /tmp/makefile
+	echo "2up:	$filename-handout2up.pdf" >> /tmp/makefile
+	echo " " >> /tmp/makefile
+	echo "4up:	$filename-handout4up.pdf" >> /tmp/makefile
+	echo " " >> /tmp/makefile
+	echo "6up:	$filename-handout6up.pdf" >> /tmp/makefile
+	echo " " >> /tmp/makefile
+	echo "3up:	$filename-handout3up.pdf" >> /tmp/makefile
+	echo " " >> /tmp/makefile
 
- echo "$1-handout.tex:	$1.tex" >> /tmp/makefile
- echo "	sed -e 's/\\documentclass\[/\documentclass[handout,/g' -e 's/\\documentclass{/\documentclass[handout]{/g' $1.tex > $1-handout.tex" >> /tmp/makefile
- echo "created makefile for $1.tex"
+	echo "$filename-handout3up.pdf: $filename-handout.pdf" >> /tmp/makefile
+	echo "	pdfjam-slides3up $filename-handout.pdf --frame true  --outfile $filename-handout3up.pdf" >> /tmp/makefile
+	echo " " >> /tmp/makefile
+
+	echo "$filename-handout6up.pdf: $filename-handout.pdf" >> /tmp/makefile
+	echo "	pdfjam-slides6up $filename-handout.pdf --frame true  --outfile $filename-handout6up.pdf" >> /tmp/makefile
+	echo " " >> /tmp/makefile
+
+	echo "$filename-handout4up.pdf: $filename-handout.pdf" >> /tmp/makefile
+	echo "	pdfnup $filename-handout.pdf --nup 2x2 --frame true --outfile /tmp/junk.pdf" >> /tmp/makefile
+	echo "	pdf90 /tmp/junk.pdf --outfile $filename-handout4up.pdf" >> /tmp/makefile
+	echo " " >> /tmp/makefile
+
+	echo "$filename-handout2up.pdf:	$filename-handout.pdf" >> /tmp/makefile
+	echo "	pdfnup $filename-handout.pdf --nup 1x2 --no-landscape --frame true --outfile $filename-handout2up.pdf" >> /tmp/makefile
+	echo " " >> /tmp/makefile
+
+	echo "$filename-handout.pdf:	$filename-handout.tex" >> /tmp/makefile
+
+
+	if [ 1 -eq "$latexmk" ]; then
+		echo "	latexmk -pdf $filename-handout" >> /tmp/makefile
+	else
+		echo "	pdflatex $filename-handout" >> /tmp/makefile
+		echo "	pdflatex $filename-handout" >> /tmp/makefile
+	fi
+	
+	if [[ -n "$compression" ]]; then
+		echo "	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/$compression -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$filename-handout-comp.pdf $filename-handout.pdf" >> /tmp/makefile
+		echo "	mv $filename-handout-comp.pdf $filename-handout.pdf" >> /tmp/makefile
+	fi
+	echo " " >> /tmp/makefile
+
+	echo "$filename-handout.tex:	$filename.tex" >> /tmp/makefile
+	echo "	sed -e 's/\\documentclass\[/\documentclass[handout,/g' -e 's/\\documentclass{/\documentclass[handout]{/g' $filename.tex > $filename-handout.tex" >> /tmp/makefile
+	echo "created makefile for $filename.tex"
 else
- echo "usage: 'makehandouts <LaTeX root filename> [screen|ebook|printer|prepress]'"
- echo "e.g.:  'makehandouts foo'  to create handouts for foo.tex"
- exit 1
+	usage
 fi
 
-if [ -e $1.tex ]; then 
- echo "checking that $1.tex exists...yes"
- make -f /tmp/makefile
+
+if [ -e $filename.tex ]; then 
+	echo "checking that $filename.tex exists...yes"
+	make -f /tmp/makefile
 else
- echo "Aborting: File $1.tex does not exist! Typo?"
- exit 1
+	echo "Aborting: File $filename.tex does not exist! Typo?" >&2
+	exit 1
 fi

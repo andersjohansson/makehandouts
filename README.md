@@ -1,6 +1,5 @@
 Forked from <http://doty.math.luc.edu/beamer-handouts>. Instructions below are adapted from there.
 
-
 # Printing LaTeX Beamer Handouts (Linux or OS X only)
 
 The LaTeX beamer class creates lovely slides for presentations including
@@ -19,7 +18,7 @@ part of the package "pdfjam". If you do not already have these commands
 installed on your system, you can install by following Step 0 below;
 otherwise, skip to Step 1.
 
-## 0. Installing "pdfjam".
+## 0. Installing `pdfjam`.
 To install pdfjam (on debian or ubuntu) run the command:
 
     sudo apt-get install pdfjam
@@ -27,7 +26,7 @@ To install pdfjam (on debian or ubuntu) run the command:
 from a command line shell. You must have already installed a TeX
 distribution.
 
-## 1. Installing the script used to create handouts.
+## 1. Installing the script
 Assuming that you have a working TeX installation ('texlive' is a good choice) and have
 installed pdfjam, the script
 [here](https://raw.githubusercontent.com/andersjohansson/makehandouts/master/makehandouts)
@@ -54,26 +53,33 @@ Assuming that you have a LaTeX beamer source file named "xxx.tex" in some folder
 
 (note that the file extension is NOT included). Of course, substitute
 your *actual* file name in place of "xxx". The 'makehandouts' command
-always creates 4 new PDF files, in the following formats:
+by default creates one new PDF files, in the following formats:
 
--   xxx-handout.pdf is a viewable version of your slides, without pauses
-    and overlays.
--   xxx-handout2up.pdf is a printable version of the slides, showing two
+-   xxx-handout.pdf, a viewable version of your slides, without pauses
+and overlays.
+
+With options (-2, -3, -4, or, -6) to the script (or by doing `make -f /tmp/makefile Xup`) you can optionally create:
+
+-   xxx-handout2up.pdf, a printable version of the slides, showing two
     slides per page.
--   xxx-handout3up.pdf is	is a printable version of the slides, showing 3
+-   xxx-handout3up.pdf, a printable version of the slides, showing 3
     slides per page.
--   xxx-handout4up.pdf is a printable version of the slides, rotated 90
+-   xxx-handout4up.pdf, a printable version of the slides, rotated 90
     degrees to landscape mode, showing four slides per page.
--   xxx-handout6up.pdf is	is a printable version of the slides, showing 6
+-   xxx-handout6up.pdf, a printable version of the slides, showing 6
     slides per page.	
 
-## 2.b Compressing files
-To generate files with compressed images add a second argument stating the quality setting to pass to ghostscript (which needs to be installed). This is reasonably one of  `screen` (72 dpi images), `ebook` (150 dpi), `printer` (300 dpi) or `prepress` (high quality, color preserving, 300 dpi imgs). For example:
+## Optionally compressing files
+To generate files with compressed images add the option "-c" with the quality setting to pass to ghostscript (which needs to be installed). This is reasonably one of  `screen` (72 dpi images), `ebook` (150 dpi), `printer` (300 dpi) or `prepress` (high quality, color preserving, 300 dpi imgs). For example:
 
-    makehandouts xxx ebook
+    makehandouts -c ebook FILENAME
 
-**NOTE:** To print the handouts, choose your desired format and view the
-corresponding PDF file using Abode's "acroread" (that tool fits
-everything automatically to the page, and other tools are not so good at
-doing such). Then print your slides using the print tool from within
-acroread.
+## Using latexmk
+Just use the option "-m" to use `latexmk -pdf` instead of two invocations of `pdflatex`.
+
+## Using all options!
+I usually use:
+
+    makehandouts -6mc screen FILENAME
+
+To get FILENAME-handout.pdf and FILENAME-handout6up.pdf, generated with latexmk and compressed to `screen` (72 dpi).
