@@ -8,7 +8,7 @@
 # Notes: Run this command in the same folder containing 'foo.tex'
 #       Type 'makehandouts' to get a hint on usage
 
-usage() { echo "Usage: $0 [-c <screen|ebook|printer|prepress>] [-m (use latexmk)] TEXFILEBASENAME" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-1|2|3|4|6 (up)] [-c <screen|ebook|printer|prepress>] [-m (use latexmk)] TEXFILEBASENAME" 1>&2; exit 1; }
 	# echo "usage: 'makehandouts <LaTeX root filename> [screen|ebook|printer|prepress]'"
 	# echo "e.g.:  'makehandouts foo'  to create handouts for foo.tex"
 
