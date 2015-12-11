@@ -101,7 +101,7 @@ if [ -n "$filename" ]; then
 	fi
 	
 	if [[ -n "$compression" ]]; then
-		echo "	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/$compression -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$filename-handout-comp.pdf $filename-handout.pdf" >> /tmp/makefile
+		echo "	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/$compression -dNOPAUSE -dQUIET -dBATCH -sOutputFile=\"$filename-handout-comp.pdf\" \"$filename-handout.pdf\"" >> /tmp/makefile
 		echo "	mv $filename-handout-comp.pdf $filename-handout.pdf" >> /tmp/makefile
 	fi
 	echo " " >> /tmp/makefile
