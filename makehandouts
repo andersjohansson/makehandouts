@@ -26,9 +26,7 @@ while getopts ":c:m12346" opt; do
 		m)
 			latexmk=1
 			;;
-		1)
-			variants="$variants 1up"
-			;;
+
 		2)
 			variants="$variants 2up"
 			;;
@@ -65,8 +63,6 @@ if [ -n "$filename" ]; then
 	else
 		echo "default:  $filename-handout.pdf" >> /tmp/makefile
 	fi
-	echo " " >> /tmp/makefile
-	echo "1up:	$filename-handout1up.pdf" >> /tmp/makefile
 	echo " " >> /tmp/makefile
 	echo "2up:	$filename-handout2up.pdf" >> /tmp/makefile
 	echo " " >> /tmp/makefile
