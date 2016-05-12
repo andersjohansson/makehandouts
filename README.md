@@ -58,7 +58,7 @@ by default creates one new PDF files, in the following formats:
 -   xxx-handout.pdf, a viewable version of your slides, without pauses
 and overlays.
 
-With options (-2, -3, -4, or, -6) to the script (or by doing `make -f /tmp/makefile Xup`) you can optionally create:
+With options (`-2`, `-3`, `-4`, or, `-6`) to the script (or by doing `make -f /tmp/makefile Xup`) you can optionally create:
 
 -   xxx-handout2up.pdf, a printable version of the slides, showing two
     slides per page.
@@ -70,16 +70,22 @@ With options (-2, -3, -4, or, -6) to the script (or by doing `make -f /tmp/makef
     slides per page.	
 
 ## Optionally compressing files
-To generate files with compressed images add the option "-c" with the quality setting to pass to ghostscript (which needs to be installed). This is reasonably one of  `screen` (72 dpi images), `ebook` (150 dpi), `printer` (300 dpi) or `prepress` (high quality, color preserving, 300 dpi imgs). For example:
+To generate files with compressed images add the option `-c` with the quality setting to pass to ghostscript (which needs to be installed). This is reasonably one of  `screen` (72 dpi images), `ebook` (150 dpi), `printer` (300 dpi) or `prepress` (high quality, color preserving, 300 dpi imgs). For example:
 
     makehandouts -c ebook FILENAME
 
 ## Using latexmk
-Just use the option "-m" to use `latexmk -pdf` instead of two invocations of `pdflatex`.
+Just use the option `-m` to use `latexmk -pdf` instead of two invocations of `pdflatex`.
 
-## Using all options!
-I usually use:
+## Removing images
+Use the option `-d` to put `graphicx` in draft-mode which replaces all images with a box with the filename (good if you can't distribute images for copyright reasons).
+If you want only certain images to be included also in handouts you can override the draft-option in your `includegraphics`-command:
 
-    makehandouts -6mc screen FILENAME
+    \includegraphics[draft=false]{image}
 
-To get FILENAME-handout.pdf and FILENAME-handout6up.pdf, generated with latexmk and compressed to `screen` (72 dpi).
+## Example with options
+You could for example use:
+
+    makehandouts -6mdc screen FILENAME
+
+To get FILENAME-handout.pdf and FILENAME-handout6up.pdf, generated with latexmk, images removed but possibly retained bitmap images compressed to `screen` (72 dpi).
