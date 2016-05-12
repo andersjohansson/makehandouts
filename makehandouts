@@ -8,7 +8,7 @@
 # Notes: Run this command in the same folder containing 'foo.tex'
 #       Type 'makehandouts' to get a hint on usage
 
-usage() { echo "Usage: $0 [-1|2|3|4|6 (up)] [-c <screen|ebook|printer|prepress>] [-m (use latexmk)] TEXFILEBASENAME" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-1|2|3|4|6 (up)] [-c <screen|ebook|printer|prepress>] [-m (use latexmk)] [-d (draft mode for graphicx)] TEXFILEBASENAME" 1>&2; exit 1; }
 	# echo "usage: 'makehandouts <LaTeX root filename> [screen|ebook|printer|prepress]'"
 	# echo "e.g.:  'makehandouts foo'  to create handouts for foo.tex"
 
@@ -16,8 +16,9 @@ usage() { echo "Usage: $0 [-1|2|3|4|6 (up)] [-c <screen|ebook|printer|prepress>]
 latexmk=
 compression=
 variants=
+draft=
 
-while getopts ":c:m12346" opt; do
+while getopts ":c:md12346" opt; do
 	case $opt in
 		c)
 			compression=$OPTARG
@@ -25,6 +26,9 @@ while getopts ":c:m12346" opt; do
 			;;
 		m)
 			latexmk=1
+			;;
+		d)
+			draft=1
 			;;
 
 		2)
@@ -107,7 +111,12 @@ if [ -n "$filename" ]; then
 	echo " " >> /tmp/makefile
 
 	echo "$filename-handout.tex:	$filename.tex" >> /tmp/makefile
-	echo "	sed -e 's/\\documentclass\[/\documentclass[handout,/g' -e 's/\\documentclass{/\documentclass[handout]{/g' $filename.tex > $filename-handout.tex" >> /tmp/makefile
+	if [ 1 -eq "$draft" ]; then
+		echo "	sed -e 's/\\documentclass\[/\PassOptionsToPackage{draft}{graphicx}\n\\\documentclass[handout,/g' -e 's/\\documentclass{/\PassOptionsToPackage{draft}{graphicx}\n\\\documentclass[handout]{/g' $filename.tex > $filename-handout.tex" >> /tmp/makefile
+	else
+		echo "	sed -e 's/\\documentclass\[/\documentclass[handout,/g' -e 's/\\documentclass{/\documentclass[handout]{/g' $filename.tex > $filename-handout.tex" >> /tmp/makefile
+	fi
+
 	echo "created makefile for $filename.tex"
 else
 	usage
