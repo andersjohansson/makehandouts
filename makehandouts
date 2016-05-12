@@ -94,10 +94,10 @@ if [ -n "$filename" ]; then
 
 
 	if [ 1 -eq "$latexmk" ]; then
-		echo "	latexmk -pdf $filename-handout" >> /tmp/makefile
+		echo "	latexmk -interaction=nonstopmode -pdf $filename-handout" >> /tmp/makefile
 	else
-		echo "	pdflatex $filename-handout" >> /tmp/makefile
-		echo "	pdflatex $filename-handout" >> /tmp/makefile
+		echo "	pdflatex -interaction=nonstopmode $filename-handout" >> /tmp/makefile
+		echo "	pdflatex -interaction=nonstopmode $filename-handout" >> /tmp/makefile
 	fi
 	
 	if [[ -n "$compression" ]]; then
