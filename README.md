@@ -1,3 +1,5 @@
+**NOTE:** Moved to https://gitlab.com/andersjohansson/makehandouts
+
 Forked from <http://doty.math.luc.edu/beamer-handouts>. Instructions below are adapted from there.
 
 # Printing LaTeX Beamer Handouts (Linux or OS X only)
